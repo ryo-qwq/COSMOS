@@ -66,16 +66,16 @@ export function OperationsDashboard() {
   }, [isPlaying]);
 
   return (
-    <div className="space-y-5">
-      {/* シナリオ＆時刻コントロール（スリム版） */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-        <div className="flex flex-wrap gap-2">
+    <div className="space-y-3 sm:space-y-5">
+      {/* シナリオ＆時刻コントロール（スマホでも1画面に山の図と同居できるコンパクト設計） */}
+      <div className="space-y-2.5 rounded-2xl border border-slate-800 bg-slate-900/80 p-3 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4 sm:space-y-0 sm:p-4">
+        <div className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap sm:gap-2">
           {SCENARIO_PRESETS.map((preset) => (
             <button
               key={preset.id}
               type="button"
               onClick={() => handleScenarioChange(preset.id)}
-              className={`rounded-xl border px-3.5 py-2 text-sm font-bold transition-all ${
+              className={`rounded-lg border px-2.5 py-1.5 text-xs font-bold transition-all sm:rounded-xl sm:px-3.5 sm:py-2 sm:text-sm ${
                 scenarioId === preset.id
                   ? 'border-emerald-400 bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
                   : 'border-slate-700 bg-slate-950/70 text-slate-300 hover:border-slate-500 hover:text-white'
@@ -86,12 +86,12 @@ export function OperationsDashboard() {
           ))}
         </div>
 
-        <div className="flex flex-1 flex-wrap items-center justify-end gap-4">
-          <div className="flex min-w-[220px] items-center gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:flex-1 sm:justify-end sm:gap-4">
+          <div className="flex flex-1 items-center gap-2 sm:flex-none sm:gap-3">
             <button
               type="button"
               onClick={() => setIsPlaying((v) => !v)}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-sky-500 px-3.5 py-2 text-xs font-bold text-slate-950 hover:bg-sky-400"
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-sky-500 px-2.5 py-1.5 text-xs font-bold text-slate-950 hover:bg-sky-400 sm:rounded-xl sm:px-3.5 sm:py-2"
             >
               {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
               {isPlaying ? '停止' : '再生'}
@@ -105,14 +105,16 @@ export function OperationsDashboard() {
                 setIsPlaying(false);
                 setHourIndex(Number(e.target.value));
               }}
-              className="w-28 accent-sky-500 sm:w-36"
+              className="min-w-0 flex-1 accent-sky-500 sm:w-36 sm:flex-none"
               aria-label="観測時刻"
             />
-            <span className="font-mono text-sm font-bold text-white">{currentPoint.hourLabel}</span>
+            <span className="shrink-0 font-mono text-xs font-bold text-white sm:text-sm">
+              {currentPoint.hourLabel}
+            </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-slate-400">追加降雨</span>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="text-[11px] font-medium text-slate-400 sm:text-xs">降雨+</span>
             <input
               type="range"
               min={0}
@@ -120,64 +122,18 @@ export function OperationsDashboard() {
               step={5}
               value={manualRainBoost}
               onChange={(e) => setManualRainBoost(Number(e.target.value))}
-              className="w-24 accent-emerald-500"
+              className="w-16 accent-emerald-500 sm:w-24"
               aria-label="追加降雨"
             />
-            <span className="w-16 font-mono text-xs font-bold text-sky-300">
-              +{manualRainBoost} mm
+            <span className="w-11 text-right font-mono text-[11px] font-bold text-sky-300 sm:w-14 sm:text-xs">
+              +{manualRainBoost}mm
             </span>
           </div>
         </div>
       </div>
 
-      {/* KPI カード 4 枚（デカ文字特化・小文字なし） */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-          <div className="flex items-center justify-between text-sm font-medium text-slate-400">
-            <span>山体水分量</span>
-            <Droplets className="h-5 w-5 text-sky-400" />
-          </div>
-          <div className="mt-2 font-mono text-4xl font-extrabold text-sky-300">
-            {currentPoint.soilMoisturePct.toFixed(0)}
-            <span className="ml-1 text-lg font-semibold text-slate-400">%</span>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-          <div className="flex items-center justify-between text-sm font-medium text-slate-400">
-            <span>ミューオン透過率</span>
-            <Activity className="h-5 w-5 text-amber-400" />
-          </div>
-          <div className="mt-2 font-mono text-4xl font-extrabold text-white">
-            {currentPoint.muonTransPct}
-            <span className="ml-1 text-lg font-semibold text-slate-400">%</span>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-          <div className="flex items-center justify-between text-sm font-medium text-slate-400">
-            <span>現在降雨量</span>
-            <CloudRain className="h-5 w-5 text-cyan-400" />
-          </div>
-          <div className="mt-2 font-mono text-4xl font-extrabold text-white">
-            {currentPoint.rainfallMmH.toFixed(0)}
-            <span className="ml-1 text-lg font-semibold text-slate-400">mm/h</span>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-          <div className="flex items-center justify-between text-sm font-medium text-slate-400">
-            <span>警戒レベル</span>
-            <ShieldAlert className={`h-5 w-5 ${alert.colorClass}`} />
-          </div>
-          <div className={`mt-2 text-3xl font-extrabold ${alert.colorClass}`}>
-            レベル {alert.level}
-          </div>
-        </div>
-      </div>
-
-      {/* 中段：山体断面図 + AI判定＆住民速報 */}
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-12">
+      {/* 山体断面図をスライダー直下に配置（スマホでスライダー操作しながら山が見える！） */}
+      <div className="grid grid-cols-1 gap-3 sm:gap-5 xl:grid-cols-12">
         <div className="xl:col-span-7">
           <MountainTunnelVisualizer
             stationName={selectedStation.name}
@@ -196,23 +152,69 @@ export function OperationsDashboard() {
         </div>
       </div>
 
+      {/* KPI カード 4 枚（スマホはコンパクト、PCは大型表示） */}
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4">
+        <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 sm:rounded-2xl sm:p-5">
+          <div className="flex items-center justify-between text-xs font-medium text-slate-400 sm:text-sm">
+            <span>山体水分量</span>
+            <Droplets className="h-4 w-4 text-sky-400 sm:h-5 sm:w-5" />
+          </div>
+          <div className="mt-1 font-mono text-2xl font-extrabold text-sky-300 sm:mt-2 sm:text-4xl">
+            {currentPoint.soilMoisturePct.toFixed(0)}
+            <span className="ml-0.5 text-sm font-semibold text-slate-400 sm:ml-1 sm:text-lg">%</span>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 sm:rounded-2xl sm:p-5">
+          <div className="flex items-center justify-between text-xs font-medium text-slate-400 sm:text-sm">
+            <span>ミューオン透過率</span>
+            <Activity className="h-4 w-4 text-amber-400 sm:h-5 sm:w-5" />
+          </div>
+          <div className="mt-1 font-mono text-2xl font-extrabold text-white sm:mt-2 sm:text-4xl">
+            {currentPoint.muonTransPct}
+            <span className="ml-0.5 text-sm font-semibold text-slate-400 sm:ml-1 sm:text-lg">%</span>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 sm:rounded-2xl sm:p-5">
+          <div className="flex items-center justify-between text-xs font-medium text-slate-400 sm:text-sm">
+            <span>現在降雨量</span>
+            <CloudRain className="h-4 w-4 text-cyan-400 sm:h-5 sm:w-5" />
+          </div>
+          <div className="mt-1 font-mono text-2xl font-extrabold text-white sm:mt-2 sm:text-4xl">
+            {currentPoint.rainfallMmH.toFixed(0)}
+            <span className="ml-0.5 text-xs font-semibold text-slate-400 sm:ml-1 sm:text-lg">mm/h</span>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 sm:rounded-2xl sm:p-5">
+          <div className="flex items-center justify-between text-xs font-medium text-slate-400 sm:text-sm">
+            <span>警戒レベル</span>
+            <ShieldAlert className={`h-4 w-4 sm:h-5 sm:w-5 ${alert.colorClass}`} />
+          </div>
+          <div className={`mt-1 text-2xl font-extrabold sm:mt-2 sm:text-3xl ${alert.colorClass}`}>
+            レベル {alert.level}
+          </div>
+        </div>
+      </div>
+
       {/* 下段：24時間推移グラフ + 観測拠点切替 */}
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-12">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 xl:col-span-8">
-          <h3 className="mb-3 text-base font-bold text-white">
+      <div className="grid grid-cols-1 gap-3 sm:gap-5 xl:grid-cols-12">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-5 xl:col-span-8">
+          <h3 className="mb-3 text-sm font-bold text-white sm:text-base">
             24時間推移（降雨・山体水分・ミューオン透過）
           </h3>
-          <div className="h-[260px] w-full">
+          <div className="h-[220px] w-full sm:h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={series} margin={{ top: 10, right: 16, left: 0, bottom: 5 }}>
+              <ComposedChart data={series} margin={{ top: 10, right: 12, left: -12, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis dataKey="hourLabel" stroke="#94a3b8" tick={{ fontSize: 12 }} interval={3} />
+                <XAxis dataKey="hourLabel" stroke="#94a3b8" tick={{ fontSize: 11 }} interval={3} />
                 <YAxis
                   yAxisId="left"
                   stroke="#94a3b8"
                   domain={[0, 100]}
                   unit="%"
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 11 }}
                 />
                 <YAxis
                   yAxisId="right"
@@ -220,7 +222,7 @@ export function OperationsDashboard() {
                   stroke="#38bdf8"
                   domain={[0, 100]}
                   unit="mm"
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 11 }}
                 />
                 <Tooltip
                   contentStyle={{
@@ -230,7 +232,7 @@ export function OperationsDashboard() {
                     fontSize: '12px',
                   }}
                 />
-                <Legend wrapperStyle={{ fontSize: '12px' }} />
+                <Legend wrapperStyle={{ fontSize: '11px' }} />
                 <ReferenceLine
                   yAxisId="left"
                   x={currentPoint.hourLabel}
@@ -270,14 +272,14 @@ export function OperationsDashboard() {
           </div>
         </div>
 
-        {/* 観測拠点切替（シンプル版） */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 xl:col-span-4">
-          <h3 className="mb-3 flex items-center gap-2 text-base font-bold text-white">
-            <MapPin className="h-5 w-5 text-emerald-400" />
+        {/* 観測拠点切替 */}
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-5 xl:col-span-4">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-white sm:text-base">
+            <MapPin className="h-4 w-4 text-emerald-400 sm:h-5 sm:w-5" />
             観測拠点
           </h3>
 
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {MONITORING_STATIONS.map((st) => {
               const stSeries = generateMountainSeries(
                 scenarioId,
@@ -293,7 +295,7 @@ export function OperationsDashboard() {
                   key={st.id}
                   type="button"
                   onClick={() => setSelectedStationId(st.id)}
-                  className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-all ${
+                  className={`flex w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-left transition-all ${
                     isSelected
                       ? 'border-emerald-400 bg-emerald-500/15'
                       : 'border-slate-800 bg-slate-950/60 hover:border-slate-600'
@@ -307,7 +309,7 @@ export function OperationsDashboard() {
                     </div>
                   </div>
                   <span
-                    className={`rounded-full border px-2.5 py-1 text-xs font-bold ${stAlert.badgeClass}`}
+                    className={`rounded-full border px-2.5 py-0.5 text-xs font-bold ${stAlert.badgeClass}`}
                   >
                     Lv.{stAlert.level}
                   </span>

@@ -48,21 +48,21 @@ export function MountainTunnelVisualizer({
           : '#34d399';
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 text-lg font-bold text-white">
-          <Mountain className="h-5 w-5 text-emerald-400" />
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 sm:p-5">
+      <div className="mb-2 flex items-center justify-between gap-2 sm:mb-3">
+        <h3 className="flex items-center gap-1.5 text-sm font-bold text-white sm:gap-2 sm:text-lg">
+          <Mountain className="h-4 w-4 text-emerald-400 sm:h-5 sm:w-5" />
           {stationName}
         </h3>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-sm font-semibold text-sky-300">
-          <CloudRain className="h-4 w-4" />
+        <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/30 bg-sky-500/10 px-2.5 py-0.5 text-xs font-semibold text-sky-300 sm:px-3 sm:py-1 sm:text-sm">
+          <CloudRain className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           {rainfallMmH.toFixed(0)} mm/h
         </span>
       </div>
 
       {/* SVG 断面図 */}
-      <div className="relative overflow-hidden rounded-xl border border-slate-800 bg-slate-950 p-2">
-        <svg viewBox="0 0 520 310" className="h-[320px] w-full">
+      <div className="relative overflow-hidden rounded-xl border border-slate-800 bg-slate-950 p-1.5 sm:p-2">
+        <svg viewBox="0 0 520 310" className="h-[205px] w-full sm:h-[310px]">
           <defs>
             <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={rainfallMmH > 20 ? '#0f172a' : '#0c1930'} />

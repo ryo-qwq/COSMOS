@@ -105,7 +105,7 @@ export function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <Header mode={mode} onModeChange={setMode} />
-      <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6">
+      <main className="mx-auto max-w-[1600px] px-3 py-3 sm:px-6 sm:py-6">
         {mode === 'experiment' ? (
           <ExperimentDashboard
             datasets={datasets}
