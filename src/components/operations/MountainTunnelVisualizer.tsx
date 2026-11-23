@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { CloudRain, Mountain, Radio } from 'lucide-react';
+import { CloudRain, Mountain } from 'lucide-react';
 import type { AlertLevel } from '../../lib/mountainSim';
 
 interface MountainTunnelVisualizerProps {
   stationName: string;
-  overburdenM: number;
   rainfallMmH: number;
   soilMoisturePct: number;
   muonTransPct: number;
@@ -14,7 +13,6 @@ interface MountainTunnelVisualizerProps {
 
 export function MountainTunnelVisualizer({
   stationName,
-  overburdenM,
   rainfallMmH,
   soilMoisturePct,
   muonTransPct,
@@ -28,10 +26,8 @@ export function MountainTunnelVisualizer({
     return () => window.clearInterval(id);
   }, []);
 
-  // 水分量に応じた山体内部の浸透ヒートマップ色
   const waterOpacity = Math.min(0.85, Math.max(0.08, (soilMoisturePct - 18) / 75));
   const absorbRatio = Math.min(0.82, 0.25 + (muonDropFromDryPct / 28) * 0.55);
-
   const rainDropsCount = rainfallMmH < 1 ? 0 : Math.min(28, Math.ceil(rainfallMmH / 3));
 
   const muonRays = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
@@ -53,31 +49,20 @@ export function MountainTunnelVisualizer({
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h3 className="flex items-center gap-2 text-base font-semibold text-white">
-            <Mountain className="h-4 w-4 text-emerald-400" />
-            山体内部水分量・トンネル常設検出器 リアルタイム断面図
-          </h3>
-          <p className="text-xs text-slate-400">
-            観測拠点: <span className="font-medium text-emerald-300">{stationName}</span>（土被り約 {overburdenM} m）
-          </p>
-        </div>
-        <div className="flex items-center gap-2 text-xs">
-          <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/30 bg-sky-500/10 px-2.5 py-0.5 text-sky-300">
-            <CloudRain className="h-3.5 w-3.5" />
-            降雨 {rainfallMmH.toFixed(1)} mm/h
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-emerald-300">
-            <Radio className="h-3.5 w-3.5 animate-pulse" />
-            LPWA 受信中
-          </span>
-        </div>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h3 className="flex items-center gap-2 text-lg font-bold text-white">
+          <Mountain className="h-5 w-5 text-emerald-400" />
+          {stationName}
+        </h3>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-sm font-semibold text-sky-300">
+          <CloudRain className="h-4 w-4" />
+          {rainfallMmH.toFixed(0)} mm/h
+        </span>
       </div>
 
       {/* SVG 断面図 */}
       <div className="relative overflow-hidden rounded-xl border border-slate-800 bg-slate-950 p-2">
-        <svg viewBox="0 0 520 310" className="h-[300px] w-full">
+        <svg viewBox="0 0 520 310" className="h-[320px] w-full">
           <defs>
             <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={rainfallMmH > 20 ? '#0f172a' : '#0c1930'} />
@@ -98,10 +83,8 @@ export function MountainTunnelVisualizer({
             </clipPath>
           </defs>
 
-          {/* 背景空 */}
           <rect x="0" y="0" width="520" height="310" fill="url(#skyGrad)" />
 
-          {/* 雨雲（降雨時） */}
           {rainfallMmH >= 2 && (
             <g opacity={Math.min(0.95, 0.35 + rainfallMmH / 70)}>
               <ellipse cx="180" cy="34" rx="58" ry="18" fill="#334155" />
@@ -110,7 +93,6 @@ export function MountainTunnelVisualizer({
             </g>
           )}
 
-          {/* 降雨パーティクル */}
           {Array.from({ length: rainDropsCount }).map((_, idx) => {
             const rx = 70 + ((idx * 41 + tick * 13) % 380);
             const ry = 46 + ((idx * 23 + tick * 17) % 120);
@@ -122,13 +104,12 @@ export function MountainTunnelVisualizer({
                 x2={rx - 4}
                 y2={ry + 12}
                 stroke="#38bdf8"
-                strokeWidth="1.2"
+                strokeWidth="1.3"
                 opacity="0.65"
               />
             );
           })}
 
-          {/* 山体本体 */}
           <path
             d="M 10 290 Q 95 160 190 92 Q 260 45 330 92 Q 425 160 510 290 Z"
             fill="url(#mountainSoil)"
@@ -136,7 +117,6 @@ export function MountainTunnelVisualizer({
             strokeWidth="2"
           />
 
-          {/* 山体内部の推定水分量ヒートマップ */}
           <g clipPath="url(#mountainClip)">
             <rect
               x="10"
@@ -148,7 +128,6 @@ export function MountainTunnelVisualizer({
             />
           </g>
 
-          {/* 宇宙線ミューオン粒子線 */}
           {muonRays.map((ray) => {
             const endY = ray.absorbed ? ray.stopY : 252;
             return (
@@ -159,18 +138,18 @@ export function MountainTunnelVisualizer({
                   x2={ray.x}
                   y2={endY}
                   stroke={ray.absorbed ? '#f59e0b' : '#38bdf8'}
-                  strokeWidth={ray.absorbed ? 1.5 : 2.1}
+                  strokeWidth={ray.absorbed ? 1.6 : 2.3}
                   strokeDasharray={ray.absorbed ? '4 3' : undefined}
-                  opacity="0.88"
+                  opacity="0.9"
                 />
                 {ray.absorbed ? (
                   <g transform={`translate(${ray.x}, ${endY})`}>
-                    <circle r="4.5" fill="#fbbf24" />
-                    <circle r="8" fill="none" stroke="#f59e0b" strokeWidth="1" opacity="0.6" />
+                    <circle r="5" fill="#fbbf24" />
+                    <circle r="9" fill="none" stroke="#f59e0b" strokeWidth="1.2" opacity="0.6" />
                   </g>
                 ) : (
                   <polygon
-                    points={`${ray.x - 3.5},${endY - 4} ${ray.x + 3.5},${endY - 4} ${ray.x},${endY + 3}`}
+                    points={`${ray.x - 4},${endY - 5} ${ray.x + 4},${endY - 5} ${ray.x},${endY + 3}`}
                     fill="#38bdf8"
                   />
                 )}
@@ -178,7 +157,6 @@ export function MountainTunnelVisualizer({
             );
           })}
 
-          {/* 地面ライン */}
           <rect x="0" y="286" width="520" height="24" fill="#0f172a" />
 
           {/* トンネル断面 */}
@@ -189,7 +167,7 @@ export function MountainTunnelVisualizer({
             strokeWidth="3"
           />
 
-          {/* トンネル内の2段重ね検出器 */}
+          {/* 検出器 */}
           <g>
             <rect
               x="234"
@@ -199,7 +177,7 @@ export function MountainTunnelVisualizer({
               rx="2.5"
               fill="#1e293b"
               stroke={ringStroke}
-              strokeWidth="1.5"
+              strokeWidth="1.8"
             />
             <rect
               x="234"
@@ -209,35 +187,32 @@ export function MountainTunnelVisualizer({
               rx="2.5"
               fill="#0f172a"
               stroke={ringStroke}
-              strokeWidth="1.5"
+              strokeWidth="1.8"
             />
-            <text x="260" y="299" textAnchor="middle" fill="#cbd5e1" fontSize="10" fontWeight="600">
-              トンネル常設 2段重ねミューオン検出器
+            <text x="260" y="302" textAnchor="middle" fill="#e2e8f0" fontSize="11" fontWeight="700">
+              ミューオン検出器
             </text>
           </g>
 
-          {/* 山体水分量ラベル */}
-          <g transform="translate(260, 152)">
-            <rect x="-82" y="-22" width="164" height="44" rx="8" fill="#020617" fillOpacity="0.78" stroke="#334155" />
-            <text x="0" y="-4" textAnchor="middle" fill="#94a3b8" fontSize="10">
-              山体内部 推定水分量
+          {/* 山体水分量（デカ表示） */}
+          <g transform="translate(260, 154)">
+            <rect x="-86" y="-26" width="172" height="52" rx="10" fill="#020617" fillOpacity="0.82" stroke="#334155" />
+            <text x="0" y="-6" textAnchor="middle" fill="#cbd5e1" fontSize="11" fontWeight="600">
+              山体水分量
             </text>
-            <text x="0" y="15" textAnchor="middle" fill="#38bdf8" fontSize="15" fontWeight="700">
-              {soilMoisturePct.toFixed(1)}%
+            <text x="0" y="18" textAnchor="middle" fill="#38bdf8" fontSize="22" fontWeight="800">
+              {soilMoisturePct.toFixed(0)}%
             </text>
           </g>
 
-          {/* 右上凡例・透過率表示 */}
-          <g transform="translate(362, 16)">
-            <rect x="0" y="0" width="146" height="58" rx="8" fill="#0f172a" fillOpacity="0.88" stroke="#334155" />
-            <text x="10" y="18" fill="#cbd5e1" fontSize="10">
-              ミューオン透過率: <tspan fill="#38bdf8" fontWeight="700">{muonTransPct}%</tspan>
+          {/* 右上：透過率（デカ表示） */}
+          <g transform="translate(382, 16)">
+            <rect x="0" y="0" width="126" height="46" rx="10" fill="#0f172a" fillOpacity="0.9" stroke="#334155" />
+            <text x="63" y="17" textAnchor="middle" fill="#cbd5e1" fontSize="10" fontWeight="600">
+              ミューオン透過率
             </text>
-            <text x="10" y="34" fill="#cbd5e1" fontSize="10">
-              水分追加減衰: <tspan fill="#fbbf24" fontWeight="700">-{muonDropFromDryPct}%</tspan>
-            </text>
-            <text x="10" y="50" fill="#94a3b8" fontSize="9">
-              (トンネル外=100%, 乾燥内=65%)
+            <text x="63" y="38" textAnchor="middle" fill="#fbbf24" fontSize="18" fontWeight="800">
+              {muonTransPct}%
             </text>
           </g>
         </svg>
