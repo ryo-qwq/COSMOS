@@ -13,20 +13,12 @@ export function Header({ mode, onModeChange }: HeaderProps) {
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
         {/* Brand */}
         <div className="flex items-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 shadow-lg shadow-sky-500/20">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 shadow-lg shadow-sky-500/20">
             <Activity className="h-5 w-5 text-white" />
-            <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-slate-950" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold tracking-wider text-white">COSMOS</h1>
-              <span className="rounded-full border border-sky-500/30 bg-sky-500/10 px-2 py-0.5 text-[11px] font-medium text-sky-300">
-                宇宙線ミューオン土砂災害予測システム
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">
-              沖縄工業高等専門学校 — 山体水分量リアルタイム可視化プラットフォーム
-            </p>
+          <div className="leading-tight">
+            <h1 className="text-lg font-extrabold tracking-wider text-white">COSMOS</h1>
+            <p className="text-[11px] text-slate-400">ミューオン土砂災害予測</p>
           </div>
         </div>
 
